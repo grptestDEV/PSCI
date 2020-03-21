@@ -1,6 +1,13 @@
-﻿if (Test-Connection -ComputerName localhost -Quiet -Count 1 -ErrorAction SilentlyContinue)
+﻿[CmdletBinding()]
+param(
+    [Parameter(Mandatory)]
+    [string]$ComputerName
+)
+
+process {
+
+if (Test-Connection -ComputerName $ComputerName -Quiet -Count 1 -ErrorAction Stop)
     {
-
-        Get-WmiObject -Class Win32_OperatingSystem -ComputerName localhost | select csname, @{LABEL='LastBootUpTime';EXPRESSION={$_.ConverttoDateTime($_.lastbootuptime)}}
-
+        Get-CimInstance -Class Win32_OperatingSystem -ComputerName $ComputerName | Select-Object csname, lastbootuptime
     }
+}
